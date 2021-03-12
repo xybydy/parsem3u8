@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -24,6 +25,14 @@ type customTags []customTag
 type customTag struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
+}
+
+func ParseFile(filepath string) Segments {
+	f, err := os.OpenFile(filepath, os.O_RDONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return Parse(f)
 }
 
 func Parse(reader io.Reader) Segments {
