@@ -2,6 +2,7 @@ package parsem3u8
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -25,6 +26,27 @@ type customTags []customTag
 type customTag struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
+}
+
+func (c customTags) Get(key string) string {
+	for _, tag := range c {
+		if tag.Key == strings.ToLower(key) {
+			return tag.Value
+		}
+	}
+
+	return ""
+}
+
+func (c *customTags) Set(key, value string) error {
+	for _, tag := range *c {
+		if tag.Key == strings.ToLower(key) {
+			tag.Value = value
+			return nil
+		}
+	}
+
+	return errors.New("no such key")
 }
 
 func ParseFile(filepath string) Segments {
