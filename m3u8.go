@@ -32,6 +32,7 @@ func ParseFile(filepath string) Segments {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	return Parse(f)
 }
 
@@ -96,7 +97,7 @@ func parseLineParameters(line string) customTags {
 
 	for _, arr := range r {
 		tag := customTag{
-			Key:   arr[1],
+			Key:   strings.ToLower(arr[1]),
 			Value: strings.Trim(arr[2], "\""),
 		}
 		tags = append(tags, tag)
