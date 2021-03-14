@@ -143,7 +143,8 @@ func Parse(reader io.Reader) Segments {
 				log.Fatal(err)
 			}
 
-			segment.Name = strings.Split(line, ",")[1]
+			splitName := strings.Split(line, ",")
+			segment.Name = splitName[len(splitName)-1]
 			segment.Ctags = parseLineParameters(line)
 
 			extInf = true

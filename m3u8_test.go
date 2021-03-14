@@ -132,9 +132,7 @@ func Test_customTags_Get(t *testing.T) {
 		args args
 		want string
 	}{
-		{name: "tvg-country", c: channel.Ctags, args: args{key: "tvg-country"}, want: "TR"},
 		{name: "tvg-name", c: channel.Ctags, args: args{key: "tvg-name"}, want: "Afyon Turk TV"},
-		{name: "tvg-language", c: channel.Ctags, args: args{key: "tvg-language"}, want: "Turkish"},
 		{name: "tvg-logo", c: channel.Ctags, args: args{key: "tvg-logo"}, want: "https://i.ibb.co/tXbD8Sz/8A1HOMZ.png"},
 	}
 
@@ -196,4 +194,17 @@ func Test_getType(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestParse(t *testing.T) {
+	f := bytes.NewBufferString(`#EXTM3U
+#EXTINF:-1 tvg-id="TV 8,5 HD-TR" group-title="ULUSAL",TR: ATATURK ADD TV
+https://5be5d840359c6.streamlock.net/url/afyonturktv/playlist.m3u8`)
+
+	m := Parse(f)
+
+	if m[0].Name != "TR: ATATURK ADD TV" {
+		t.Errorf("testParse() = %v, want %v", m[0].Name, "TR: ATATURK ADD TV")
+	}
+
 }
