@@ -175,3 +175,25 @@ func Test_customTags_Set(t *testing.T) {
 		})
 	}
 }
+
+func Test_getType(t *testing.T) {
+	type args struct {
+		text string
+	}
+	tests := []struct {
+		name string
+		args args
+		want MediaType
+	}{
+		{name: "stream", args: args{"https://5be5d840359c6.streamlock.net/afyonturktv/afyonturktv/playlist.m3u8"}, want: Stream},
+		{name: "stream2", args: args{"http://example.com:8080/C@FFFF/keeee/50268"}, want: Stream},
+		{name: "stream3", args: args{"http://example.com:8080/user/P090assw99rd/50268.mp4"}, want: Vod},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getType(tt.args.text); got != tt.want {
+				t.Errorf("getType() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

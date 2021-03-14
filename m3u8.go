@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -14,12 +15,56 @@ import (
 
 var linePattern = regexp.MustCompile(`([a-zA-Z-]+)=("[^"]+"|[^",]+)`)
 
+type MediaType uint
+
+const (
+	Stream = iota + 1
+	Vod
+)
+
+var videoTypes = []string{
+	"3g2",
+	"3gp",
+	"aaf",
+	"asf",
+	"avchd",
+	"avi",
+	"drc",
+	"flv",
+	"m2v",
+	"m4p",
+	"m4v",
+	"mkv",
+	"mng",
+	"mov",
+	"mp2",
+	"mp4",
+	"mpe",
+	"mpeg",
+	"mpg",
+	"mpv",
+	"mxf",
+	"nsv",
+	"ogg",
+	"ogv",
+	"qt",
+	"rm",
+	"rmvb",
+	"roq",
+	"svi",
+	"vob",
+	"webm",
+	"wmv",
+	"yuv",
+}
+
 type Segments []Segment
 type Segment struct {
 	Name     string     `json:"name"`
 	Duration float64    `json:"duration"`
 	Ctags    customTags `json:"tags"`
 	URL      string     `json:"url"`
+	Type     MediaType  `json:"-"`
 }
 
 type customTags []customTag
@@ -106,6 +151,9 @@ func Parse(reader io.Reader) Segments {
 			segment.URL = line
 			extInf = false
 
+			lineType := getType(line)
+			segment.Type = lineType
+
 			segments = append(segments, segment)
 		}
 	}
@@ -126,4 +174,16 @@ func parseLineParameters(line string) customTags {
 	}
 
 	return tags
+}
+
+func getType(text string) MediaType {
+	ext := strings.Trim(filepath.Ext(text), ".")
+
+	for i := 0; i < len(videoTypes); i++ {
+		if ext == videoTypes[i] {
+			return Vod
+		}
+	}
+
+	return Stream
 }
